@@ -270,7 +270,7 @@ const GenerateInvoicePage = ({
           </Button>
         </footer>
       </main>
-      <footer style={{ textAlign: "center", padding: "var(--spacer-4)" }}>
+      <footer style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "0.5ch", padding: "var(--spacer-4)" }}>
         Powered by <span className="logo-full" />
       </footer>
     </>

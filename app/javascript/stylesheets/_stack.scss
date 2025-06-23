@@ -76,7 +76,6 @@
 }
 
 main.stack {
-  height: min-content;
   margin: spacer(4) auto;
   max-width: $main-stack-width;
   width: calc(100% - 2 * #{spacer(4)});
