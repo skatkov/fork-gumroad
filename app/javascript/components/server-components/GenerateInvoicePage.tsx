@@ -69,11 +69,15 @@ const GenerateInvoicePage = ({
     setFullName((prev) => ({ ...prev, error: !prev.value.length }));
     setStreetAddress((prev) => ({ ...prev, error: !prev.value.length }));
     setCity((prev) => ({ ...prev, error: !prev.value.length }));
-    setState((prev) => ({ ...prev, error: !prev.value.length }));
+    setState((prev) => ({ ...prev, error: country.value === "US" && !prev.value.length }));
     setZipCode((prev) => ({ ...prev, error: !prev.value.length }));
     setCountry((prev) => ({ ...prev, error: !prev.value.length }));
 
-    if ([fullName, streetAddress, city, state, zipCode, country].some((field) => !field.value.length)) return;
+    const requiredFields = [fullName, streetAddress, city, zipCode, country];
+    if (country.value === "US") {
+      requiredFields.push(state);
+    }
+    if (requiredFields.some((field) => !field.value.length)) return;
 
     setIsLoading(true);
     try {
@@ -139,7 +143,7 @@ const GenerateInvoicePage = ({
               onChange={(e) => setStreetAddress({ value: e.target.value })}
             />
           </fieldset>
-          <div style={{ display: "grid", gap: "var(--spacer-2)", gridTemplateColumns: "2fr 1fr 1fr" }}>
+          <div style={{ display: "grid", gap: "var(--spacer-2)", gridTemplateColumns: country.value === "US" ? "2fr 1fr 1fr" : "1fr 1fr" }}>
             <fieldset className={cx({ danger: city.error })}>
               <label htmlFor="city">City</label>
               <input
@@ -150,16 +154,18 @@ const GenerateInvoicePage = ({
                 onChange={(e) => setCity({ value: e.target.value })}
               />
             </fieldset>
-            <fieldset className={cx({ danger: state.error })}>
-              <label htmlFor="state">State</label>
-              <input
-                id="state"
-                type="text"
-                placeholder="State"
-                value={state.value}
-                onChange={(e) => setState({ value: e.target.value })}
-              />
-            </fieldset>
+            {country.value === "US" ? (
+              <fieldset className={cx({ danger: state.error })}>
+                <label htmlFor="state">State</label>
+                <input
+                  id="state"
+                  type="text"
+                  placeholder="State"
+                  value={state.value}
+                  onChange={(e) => setState({ value: e.target.value })}
+                />
+              </fieldset>
+            ) : null}
             <fieldset className={cx({ danger: zipCode.error })}>
               <label htmlFor="zip_code">ZIP code</label>
               <input
@@ -227,11 +233,13 @@ const GenerateInvoicePage = ({
             </div>
             <div>
               <span style={{ opacity: city.value.length ? undefined : "var(--disabled-opacity)" }}>
-                {`${city.value || "San Francisco"},`}
+                {`${city.value || "San Francisco"}${country.value === "US" ? "," : ""}`}
               </span>{" "}
-              <span style={{ opacity: state.value.length ? undefined : "var(--disabled-opacity)" }}>
-                {state.value || "CA"}
-              </span>{" "}
+              {country.value === "US" ? (
+                <span style={{ opacity: state.value.length ? undefined : "var(--disabled-opacity)" }}>
+                  {state.value || "CA"}
+                </span>
+              ) : null}{" "}
               <span style={{ opacity: zipCode.value.length ? undefined : "var(--disabled-opacity)" }}>
                 {zipCode.value || "94107"}
               </span>
