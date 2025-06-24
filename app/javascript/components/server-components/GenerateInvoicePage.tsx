@@ -53,6 +53,7 @@ const GenerateInvoicePage = ({
   const [isLoading, setIsLoading] = React.useState(false);
 
   const [fullName, setFullName] = React.useState<FieldState>({ value: form_info.data.full_name ?? "" });
+  const [businessName, setBusinessName] = React.useState<FieldState>({ value: "" });
   const [vatId, setVatId] = React.useState("");
   const [streetAddress, setStreetAddress] = React.useState<FieldState>({
     value: form_info.data.street_address ?? "",
@@ -85,6 +86,7 @@ const GenerateInvoicePage = ({
         id,
         email,
         full_name: fullName.value,
+        business_name: businessName.value,
         vat_id: form_info.display_vat_id ? vatId : null,
         street_address: streetAddress.value,
         city: city.value,
@@ -123,6 +125,16 @@ const GenerateInvoicePage = ({
               type="text"
               value={fullName.value}
               onChange={(e) => setFullName({ value: e.target.value })}
+            />
+          </fieldset>
+          <fieldset>
+            <label htmlFor="business_name">Business name</label>
+            <input
+              id="business_name"
+              placeholder="Business name (optional)"
+              type="text"
+              value={businessName.value}
+              onChange={(e) => setBusinessName({ value: e.target.value })}
             />
           </fieldset>
           {form_info.display_vat_id ? (
@@ -228,6 +240,11 @@ const GenerateInvoicePage = ({
             <div style={{ opacity: fullName.value.length ? undefined : "var(--disabled-opacity)" }}>
               {fullName.value || "Edgar Gumstein"}
             </div>
+            {businessName.value.length ? (
+              <div>
+                {businessName.value}
+              </div>
+            ) : null}
             <div style={{ opacity: streetAddress.value.length ? undefined : "var(--disabled-opacity)" }}>
               {streetAddress.value || "123 Gum Road"}
             </div>

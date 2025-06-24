@@ -6,6 +6,7 @@ export const sendInvoice = async ({
   id,
   email,
   full_name,
+  business_name,
   vat_id,
   street_address,
   city,
@@ -17,6 +18,7 @@ export const sendInvoice = async ({
   id: string;
   email: string;
   full_name: string;
+  business_name?: string;
   vat_id: null | string;
   street_address: string;
   city: string;
@@ -33,6 +35,7 @@ export const sendInvoice = async ({
       id,
       email,
       full_name,
+      business_name,
       vat_id,
       street_address,
       city,
