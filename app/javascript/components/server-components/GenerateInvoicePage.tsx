@@ -66,6 +66,14 @@ const GenerateInvoicePage = ({
 
   const [downloadUrl, setDownloadUrl] = React.useState<string | null>(null);
 
+  const euCountries = [
+    "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", 
+    "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL", 
+    "PL", "PT", "RO", "SK", "SI", "ES", "SE"
+  ];
+
+  const isEuCountry = euCountries.includes(country.value);
+
   const handleDownload = async () => {
     setFullName((prev) => ({ ...prev, error: !prev.value.length }));
     setStreetAddress((prev) => ({ ...prev, error: !prev.value.length }));
@@ -87,7 +95,7 @@ const GenerateInvoicePage = ({
         email,
         full_name: fullName.value,
         business_name: businessName.value,
-        vat_id: form_info.display_vat_id ? vatId : null,
+        vat_id: (form_info.display_vat_id || isEuCountry) ? vatId : null,
         street_address: streetAddress.value,
         city: city.value,
         state: state.value,
@@ -137,12 +145,20 @@ const GenerateInvoicePage = ({
               onChange={(e) => setBusinessName({ value: e.target.value })}
             />
           </fieldset>
-          {form_info.display_vat_id ? (
+          {(form_info.display_vat_id || isEuCountry) ? (
             <fieldset>
               <legend>
-                <label htmlFor="chargeable_vat_id">{form_info.vat_id_label}</label>
+                <label htmlFor="chargeable_vat_id">
+                  {form_info.display_vat_id ? form_info.vat_id_label : "VAT ID"}
+                </label>
               </legend>
-              <input id="chargeable_vat_id" type="text" value={vatId} onChange={(e) => setVatId(e.target.value)} />
+              <input 
+                id="chargeable_vat_id" 
+                type="text" 
+                placeholder={form_info.display_vat_id ? "" : "VAT ID (optional)"}
+                value={vatId} 
+                onChange={(e) => setVatId(e.target.value)} 
+              />
             </fieldset>
           ) : null}
           <fieldset className={cx({ danger: streetAddress.error })}>
@@ -243,6 +259,11 @@ const GenerateInvoicePage = ({
             {businessName.value.length ? (
               <div>
                 {businessName.value}
+              </div>
+            ) : null}
+            {(form_info.display_vat_id || isEuCountry) && vatId.length ? (
+              <div>
+                VAT ID: {vatId}
               </div>
             ) : null}
             <div style={{ opacity: streetAddress.value.length ? undefined : "var(--disabled-opacity)" }}>
