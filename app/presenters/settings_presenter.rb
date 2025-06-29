@@ -14,6 +14,7 @@ class SettingsPresenter
     authorized_applications
     password
     third_party_analytics
+    billing
     advanced
   ).freeze
 
@@ -29,7 +30,7 @@ class SettingsPresenter
       case page
       when "main", "payments", "password", "third_party_analytics", "advanced"
         Pundit.policy!(pundit_user, [:settings, page.to_sym, seller]).show?
-      when "profile"
+      when "profile", "billing"
         Pundit.policy!(pundit_user, [:settings, page.to_sym]).show?
       when "team"
         Pundit.policy!(pundit_user, [:settings, :team, seller]).show?
@@ -225,6 +226,28 @@ class SettingsPresenter
       minimum_payout_threshold_cents: seller.minimum_payout_threshold_cents,
       payout_frequency: seller.payout_frequency,
       payout_frequency_daily_supported: seller.instant_payouts_supported?,
+    }
+  end
+
+  def billing_props
+    billing_detail = seller.billing_detail || seller.build_billing_detail
+    
+    {
+      settings_pages: pages,
+      is_form_disabled: !Pundit.policy!(pundit_user, [:settings, :billing]).update?,
+      billing_detail: {
+        full_name: billing_detail.full_name,
+        business_name: billing_detail.business_name,
+        business_id: billing_detail.business_id,
+        street_address: billing_detail.street_address,
+        city: billing_detail.city,
+        state: billing_detail.state,
+        zip_code: billing_detail.zip_code,
+        country_code: billing_detail.country_code,
+        additional_notes: billing_detail.additional_notes,
+      },
+      countries: Compliance::Countries.for_select.to_h,
+      states: states,
     }
   end
 

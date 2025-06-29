@@ -10,6 +10,7 @@ const PAGE_TITLES = {
   profile: "Profile",
   team: "Team",
   payments: "Payments",
+  billing: "Billing",
   authorized_applications: "Applications",
   password: "Password",
   third_party_analytics: "Third-party analytics",

@@ -81,6 +81,7 @@ import SecureRedirectPage from "$app/components/server-components/SecureRedirect
 import AdvancedSettingsPage from "$app/components/server-components/Settings/AdvancedPage";
 import ApplicationEditPage from "$app/components/server-components/Settings/AdvancedPage/EditApplicationPage";
 import AuthorizedApplicationsSettingsPage from "$app/components/server-components/Settings/AuthorizedApplicationsPage";
+import BillingSettingsPage from "$app/components/server-components/Settings/BillingSettingsPage";
 import MainSettingsPage from "$app/components/server-components/Settings/MainPage";
 import PasswordSettingsPage from "$app/components/server-components/Settings/PasswordPage";
 import PaymentsSettingsPage from "$app/components/server-components/Settings/PaymentsPage";
@@ -131,6 +132,7 @@ ReactOnRails.register({
   AudiencePage,
   AuthorizedApplicationsSettingsPage,
   BalancePage,
+  BillingSettingsPage,
   BundleEditPage,
   CheckoutPage,
   CollaboratorsPage,

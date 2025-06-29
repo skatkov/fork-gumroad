@@ -55,6 +55,7 @@ class User < ApplicationRecord
 
   # Associate with CustomDomain.alive objects
   has_one :custom_domain, -> { alive }
+  has_one :billing_detail, foreign_key: :purchaser_id, dependent: :destroy
 
   has_many :orders, foreign_key: :purchaser_id
   has_many :purchases, foreign_key: :purchaser_id

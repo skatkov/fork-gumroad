@@ -445,6 +445,7 @@ Rails.application.routes.draw do
         get :paypal_connect
         post :remove_credit_card
       end
+      resource :billing, only: %i[show update], controller: "billing"
       resource :stripe, controller: :stripe, only: [] do
         collection do
           post :disconnect
