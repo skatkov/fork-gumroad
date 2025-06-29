@@ -54,7 +54,7 @@ const GenerateInvoicePage = ({
 
   const [fullName, setFullName] = React.useState<FieldState>({ value: form_info.data.full_name ?? "" });
   const [businessName, setBusinessName] = React.useState<FieldState>({ value: "" });
-  const [vatId, setVatId] = React.useState("");
+  const [businessId, setBusinessId] = React.useState("");
   const [streetAddress, setStreetAddress] = React.useState<FieldState>({
     value: form_info.data.street_address ?? "",
   });
@@ -66,13 +66,116 @@ const GenerateInvoicePage = ({
 
   const [downloadUrl, setDownloadUrl] = React.useState<string | null>(null);
 
-  const euCountries = [
-    "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", 
-    "DE", "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL", 
-    "PL", "PT", "RO", "SK", "SI", "ES", "SE"
+  const businessIdCountries = [
+    // EU countries
+    "AT",
+    "BE",
+    "BG",
+    "HR",
+    "CY",
+    "CZ",
+    "DK",
+    "EE",
+    "FI",
+    "FR",
+    "DE",
+    "GR",
+    "HU",
+    "IE",
+    "IT",
+    "LV",
+    "LT",
+    "LU",
+    "MT",
+    "NL",
+    "PL",
+    "PT",
+    "RO",
+    "SK",
+    "SI",
+    "ES",
+    "SE",
+    // Other European countries
+    "GB",
+    "NO",
+    "CH",
+    "IS",
+    // Commonwealth & English-speaking
+    "CA",
+    "AU",
+    "NZ",
+    "ZA",
+    // Other major economies
+    "JP",
+    "KR",
+    "IN",
+    "BR",
+    "MX",
   ];
 
-  const isEuCountry = euCountries.includes(country.value);
+  const getBusinessIdLabel = (countryCode: string): string => {
+    switch (countryCode) {
+      // EU countries
+      case "AT":
+      case "BE":
+      case "BG":
+      case "HR":
+      case "CY":
+      case "CZ":
+      case "DK":
+      case "EE":
+      case "FI":
+      case "FR":
+      case "DE":
+      case "GR":
+      case "HU":
+      case "IE":
+      case "IT":
+      case "LV":
+      case "LT":
+      case "LU":
+      case "MT":
+      case "NL":
+      case "PL":
+      case "PT":
+      case "RO":
+      case "SK":
+      case "SI":
+      case "ES":
+      case "SE":
+        return "VAT ID";
+      case "GB":
+        return "GB VAT";
+      case "NO":
+        return "MVA";
+      case "CH":
+        return "MWST/TVA";
+      case "IS":
+        return "VSK";
+      case "CA":
+        return "GST/HST";
+      case "AU":
+        return "ABN";
+      case "NZ":
+        return "GST";
+      case "ZA":
+        return "VAT vendor";
+      case "JP":
+        return "Consumption tax";
+      case "KR":
+        return "VAT registration";
+      case "IN":
+        return "GST";
+      case "BR":
+        return "CNPJ";
+      case "MX":
+        return "RFC";
+      default:
+        return "Business ID";
+    }
+  };
+
+  const shouldShowBusinessId = businessIdCountries.includes(country.value);
 
   const handleDownload = async () => {
     setFullName((prev) => ({ ...prev, error: !prev.value.length }));
@@ -95,7 +198,7 @@ const GenerateInvoicePage = ({
         email,
         full_name: fullName.value,
         business_name: businessName.value,
-        vat_id: (form_info.display_vat_id || isEuCountry) ? vatId : null,
+        business_id: form_info.display_vat_id || shouldShowBusinessId ? businessId : null,
         street_address: streetAddress.value,
         city: city.value,
         state: state.value,
@@ -145,19 +248,19 @@ const GenerateInvoicePage = ({
               onChange={(e) => setBusinessName({ value: e.target.value })}
             />
           </fieldset>
-          {(form_info.display_vat_id || isEuCountry) ? (
+          {form_info.display_vat_id || shouldShowBusinessId ? (
             <fieldset>
               <legend>
-                <label htmlFor="chargeable_vat_id">
-                  {form_info.display_vat_id ? form_info.vat_id_label : "VAT ID"}
+                <label htmlFor="chargeable_business_id">
+                  {form_info.display_vat_id ? form_info.vat_id_label : getBusinessIdLabel(country.value)}
                 </label>
               </legend>
-              <input 
-                id="chargeable_vat_id" 
-                type="text" 
-                placeholder={form_info.display_vat_id ? "" : "VAT ID (optional)"}
-                value={vatId} 
-                onChange={(e) => setVatId(e.target.value)} 
+              <input
+                id="chargeable_business_id"
+                type="text"
+                placeholder={form_info.display_vat_id ? "" : `${getBusinessIdLabel(country.value)} (optional)`}
+                value={businessId}
+                onChange={(e) => setBusinessId(e.target.value)}
               />
             </fieldset>
           ) : null}
@@ -171,7 +274,13 @@ const GenerateInvoicePage = ({
               onChange={(e) => setStreetAddress({ value: e.target.value })}
             />
           </fieldset>
-          <div style={{ display: "grid", gap: "var(--spacer-2)", gridTemplateColumns: country.value === "US" ? "2fr 1fr 1fr" : "1fr 1fr" }}>
+          <div
+            style={{
+              display: "grid",
+              gap: "var(--spacer-2)",
+              gridTemplateColumns: country.value === "US" ? "2fr 1fr 1fr" : "1fr 1fr",
+            }}
+          >
             <fieldset className={cx({ danger: city.error })}>
               <label htmlFor="city">City</label>
               <input
@@ -256,14 +365,10 @@ const GenerateInvoicePage = ({
             <div style={{ opacity: fullName.value.length ? undefined : "var(--disabled-opacity)" }}>
               {fullName.value || "Edgar Gumstein"}
             </div>
-            {businessName.value.length ? (
+            {businessName.value.length ? <div>{businessName.value}</div> : null}
+            {(form_info.display_vat_id || shouldShowBusinessId) && businessId.length ? (
               <div>
-                {businessName.value}
-              </div>
-            ) : null}
-            {(form_info.display_vat_id || isEuCountry) && vatId.length ? (
-              <div>
-                VAT ID: {vatId}
+                {getBusinessIdLabel(country.value)}: {businessId}
               </div>
             ) : null}
             <div style={{ opacity: streetAddress.value.length ? undefined : "var(--disabled-opacity)" }}>
@@ -316,7 +421,15 @@ const GenerateInvoicePage = ({
           </Button>
         </footer>
       </main>
-      <footer style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "0.5ch", padding: "var(--spacer-4)" }}>
+      <footer
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "0.5ch",
+          padding: "var(--spacer-4)",
+        }}
+      >
         Powered by <span className="logo-full" />
       </footer>
     </>
