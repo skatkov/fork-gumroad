@@ -40,5 +40,15 @@
     </tbody>
   </table>
 
-  <%= paginate @purchases, views_prefix: "admin" %>
+  <% if @pagination&.pages && @pagination.pages > 1 %>
+    <div class="pagination" role="navigation" aria-label="Pagination">
+      <%= link_to("‹ Previous", pagy_url_for(@pagination, @pagination.prev), class: "button", inert: !@pagination.prev) %>
+      <menu>
+        <% (1..@pagination.pages).map do |page| %>
+          <li><%= link_to(page, pagy_url_for(@pagination, page), class: "button", inert: page == @pagination.page) %></li>
+        <% end %>
+      </menu>
+      <%= link_to("Next ›", pagy_url_for(@pagination, @pagination.next), class: "button", inert: !@pagination.next) %>
+    </div>
+  <% end %>
 </div>

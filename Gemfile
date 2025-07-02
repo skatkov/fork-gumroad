@@ -121,7 +121,7 @@ gem "jbuilder", "~> 2.11"
 gem "js-routes", "~> 2.2"
 gem "json", "~> 2.6"
 gem "json-schema", "~> 5.0"
-gem "kaminari", "~> 1.2"
+
 gem "koala", "~> 3.3"
 gem "lograge", "~> 0.12"
 gem "makara", "0.6.0.pre"

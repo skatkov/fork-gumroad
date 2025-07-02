@@ -2,6 +2,7 @@
 
 class Admin::BaseController < ApplicationController
   include ActionView::Helpers::DateHelper, ActionView::Helpers::NumberHelper, AdminActionTracker, Impersonate
+  include Pagy::UrlHelpers
 
   layout "admin"
 

@@ -8,9 +8,8 @@ class Api::Mobile::PurchasesController < Api::Mobile::BaseController
   def index
     purchases = current_resource_owner.purchases.for_mobile_listing
     purchases_json = if params[:per_page] && params[:page]
-      purchases_to_json(
-        purchases.page_with_kaminari(params[:page]).per(params[:per_page])
-      )
+      pagination, paginated_purchases = pagy(purchases, page: params[:page], limit: params[:per_page])
+      purchases_to_json(paginated_purchases)
     else
       media_locations_scope = MediaLocation.where(product_id: purchases.pluck(:link_id))
       cache [purchases, media_locations_scope], expires_in: 10.minutes do

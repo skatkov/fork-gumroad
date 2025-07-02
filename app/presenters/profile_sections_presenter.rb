@@ -137,8 +137,7 @@ class ProfileSectionsPresenter
     def visible_posts(section: nil)
       query = seller.installments.visible_on_profile
                                  .order(published_at: :desc)
-                                 .page_with_kaminari(0)
-                                 .per(999)
+                                 .limit(999)
       query = query.where(id: section.shown_posts) if section
 
       query.map do |post|

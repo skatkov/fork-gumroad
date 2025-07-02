@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Admin::LinksController < Admin::BaseController
+  include Pagy::Backend
+
   before_action :fetch_product_by_general_permalink, except: %i[purchases
                                                                 flag_seller_for_tos_violation
                                                                 views_count sales_stats
@@ -77,12 +79,12 @@ class Admin::LinksController < Admin::BaseController
       sales = product.sales
     end
 
-    @purchases = sales.where("purchase_state IN ('preorder_authorization_successful', 'preorder_concluded_unsuccessfully', 'successful', 'failed', 'not_charged')").exclude_not_charged_except_free_trial
-    @purchases = @purchases.order("created_at DESC, id DESC").page_with_kaminari(params[:page]).per(params[:per_page])
+    purchases_query = sales.where("purchase_state IN ('preorder_authorization_successful', 'preorder_concluded_unsuccessfully', 'successful', 'failed', 'not_charged')").exclude_not_charged_except_free_trial
+    pagination, @purchases = pagy(purchases_query.order("created_at DESC, id DESC"), page: params[:page], limit: params[:per_page])
 
     respond_to do |format|
       purchases_json = @purchases.as_json(admin_review: true)
-      format.json { render json: { purchases: purchases_json, page: params[:page].to_i } }
+      format.json { render json: { purchases: purchases_json, pagination: PagyPresenter.new(pagination).metadata } }
     end
   end
 

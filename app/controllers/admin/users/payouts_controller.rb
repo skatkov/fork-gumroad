@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Admin::Users::PayoutsController < Admin::BaseController
+  include Pagy::Backend
+
   before_action :require_user_has_payout_privileges!, except: %i[index show sync sync_all]
   before_action :fetch_payment, only: %i[show retry cancel fail sync]
   before_action :fetch_user, only: [:index, :pause, :resume]
@@ -10,10 +12,7 @@ class Admin::Users::PayoutsController < Admin::BaseController
 
   def index
     @title = "Payouts"
-    @payouts = @user.payments
-      .order(id: :desc)
-      .page_with_kaminari(params[:page])
-      .per(RECORDS_PER_PAGE)
+    @pagination, @payouts = pagy(@user.payments.order(id: :desc), page: params[:page], limit: RECORDS_PER_PAGE)
   end
 
   def show

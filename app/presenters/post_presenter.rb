@@ -57,8 +57,7 @@ class PostPresenter
                             .filter_by_product_id_if_present(link.try(:id))
                             .where.not(id:)
                             .order(published_at: :desc)
-                            .page_with_kaminari(1)
-                            .per(RECENT_UPDATES_LIMIT)
+                            .limit(RECENT_UPDATES_LIMIT)
                             .filter_map do |post|
                               recent_post_data(post) if purchase.nil? || post.purchase_passes_filters(purchase)
                             end
